@@ -31,4 +31,10 @@ class SensorMonitor:
         event = AlertEvent(sensor_name, value, sensor.get_unit(), severity, datetime.now())
         # Snapshot tương đương ToArray(): cho phép gỡ observer khi đang phát tin.
         for observer in tuple(self._observers):
-            observer.update(event)
+            try:
+                observer.update(event)
+            except Exception as exc:
+                # Giới hạn bắt lỗi ở biên plugin observer; giữ nguyên sự kiện.
+                message = f"{type(observer).__name__}: {exc}"
+                self.errors.append(message)
+                print(f"[OBSERVER ERROR] {message}")
