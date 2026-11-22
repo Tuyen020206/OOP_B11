@@ -130,7 +130,14 @@ class CampusTests(unittest.TestCase):
         self.assertFalse(door.is_locked)
         self.assertFalse(vent.is_running)
 
+    def test_mediator_ignores_unknown(self):
+        alarm, door, vent = Alarm(), DoorController(), VentilationController()
+        mediator = EmergencyMediator(alarm, door, vent)
+        mediator.handle_alert(AlertEvent("Lab", 0, "% smoke", "NORMAL", datetime.now()))
+        self.assertFalse(alarm.is_on)
+        self.assertTrue(door.is_locked)
+        self.assertTrue(vent.is_running)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
-
